@@ -78,6 +78,27 @@ public class TracRpc {
   }
   
   /**
+   * Gets ticket information
+   * @param id the ticket to query
+   * @return a {@link Ticket Ticket} object populated with info
+   * @throws TracRpcException 
+   */
+  public Ticket getTicket(Integer id) throws TracRpcException
+  {
+    Object[] params = new Object[]{id};
+    Object[] result = (Object[])this.call("ticket.get", params);
+    
+    if(result.length >= 4) {
+      Ticket t = new Ticket();
+      t.setId((Integer)result[0]);
+      t.setAttribs((HashMap)result[3]);
+      return t;
+    }
+    
+    throw new TracRpcException("Unexpected response to ticket.get");
+  }
+  
+  /**
    * Creates a milestone
    * @param name The name of the milestone
    * @param due The due date of the milestone. Can be null, to specify no due date
