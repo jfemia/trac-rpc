@@ -99,6 +99,20 @@ public class TracRpc {
   }
   
   /**
+   * Sends a populated Ticket instance to Trac to create the ticket
+   * @param t ticket to create
+   * @param notify whether to send notification emails
+   * @throws TracRpcException 
+   */
+  public void createTicket(Ticket t, Boolean notify) throws TracRpcException
+  {
+    Object[] params = new Object[]{t.getSummary(), t.getDescription(), 
+                                   t.getAttribs(), notify};
+    Integer id = (Integer)this.call("ticket.create", params);
+    t.setId(id);
+  }
+  
+  /**
    * Creates a milestone
    * @param name The name of the milestone
    * @param due The due date of the milestone. Can be null, to specify no due date
@@ -116,5 +130,46 @@ public class TracRpc {
       throw new TracRpcException("ticket.milestone.create returned error " 
                                   + result.toString());
     }
+  }
+  
+  /**
+   * Sets the contents of a wiki page, creating it if necessary, or overwriting
+   * existing contents.
+   * @param name the name of the page (may contain slashes for nested)
+   * @param content the new content of the page
+   * @throws TracRpcException 
+   */
+  public void setWikiPage(String name, String content) throws TracRpcException
+  {
+    Object[] params = new Object[]{name,content,new HashMap()};
+    Boolean result = (Boolean)this.call("wiki.putPage", params);
+    if(!result) {
+      throw new TracRpcException("wiki.putPage returned false");
+    }
+  }
+  
+  /**
+   * Gets the contents of a wiki page
+   * @param name name of the page to get
+   * @return contents
+   * @throws TracRpcException
+   */
+  public String getWikiPage(String name) throws TracRpcException
+  {
+    Object[] params = new Object[]{name};
+    return (String)this.call("wiki.getPage", params);
+  }
+  
+  /**
+   * Appends text to an existing wiki page, or create the page if doesn't exist
+   * @param name name of the page
+   * @param extraContent content to add to the page
+   * @throws TracRpcException 
+   */
+  public void appendWikiPage(String name, String extraContent) throws TracRpcException
+  {
+    String content = this.getWikiPage(name);
+    content += extraContent;
+    this.setWikiPage(name, content);
   }
 }
