@@ -24,22 +24,19 @@
 package uk.co.badgerr.trac;
 
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Represents a Trac Ticket
  * @author James Femia <badgerr@gmail.com>
  */
-public class Ticket {
+public final class Ticket extends AttribContainer {
   private Integer id = null;
-  private HashMap<String, Object> attribs;
-  
+
   /**
    * Construct an empty ticket
    */
   public Ticket()
   {
-    this.attribs = new HashMap();
   }
 
   /**
@@ -86,40 +83,6 @@ public class Ticket {
   public Date getModified()
   {
     return (Date)this.attribs.get("changetime");
-  }
-
-  /**
-   * Get the entire collection of ticket attributes,
-   * useful when there are custom fields.
-   * @return 
-   */
-  public HashMap<String, Object> getAttribs() 
-  {
-    return this.attribs;
-  }
-
-  /**
-   * Set all of the ticket attributes. This will completely replace
-   * existing attributes.
-   * @param attribs 
-   */
-  public void setAttribs(HashMap<String, Object> attribs) 
-  {
-    if(attribs != null)
-      this.attribs = attribs;
-  }
-  
-  /**
-   * Get a named attribute string, or an empty string if attrib doesn't exist
-   * @param name name of the attribute to get
-   * @return a valid string, with attrib contents, or empty
-   */
-  public String getAttribString(String name)
-  {
-    String ret = (String)this.attribs.get(name);
-    if(ret == null)
-      ret = new String();
-    return ret;
   }
   
   /**

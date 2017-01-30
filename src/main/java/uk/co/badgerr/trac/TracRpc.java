@@ -114,20 +114,45 @@ public class TracRpc {
   
   /**
    * Creates a milestone
-   * @param name The name of the milestone
-   * @param due The due date of the milestone. Can be null, to specify no due date
+   * @param m populated milestone object
    * @throws TracRpcException 
    */
-  public void createMilestone(String name, Date due) throws TracRpcException
+  public void createMilestone(Milestone m) throws TracRpcException
   {
-    HashMap<String,Date> msDate = new HashMap();
-    if(due != null)
-      msDate.put("due", due);
-        
-    Object[] params = new Object[]{name, msDate};
+    Object[] params = new Object[]{m.getName(), m.getAttribs()};
     Integer result = (Integer)this.call("ticket.milestone.create", params);
     if(result > 0) {
       throw new TracRpcException("ticket.milestone.create returned error " 
+                                  + result.toString());
+    }
+  }
+  
+  /**
+   * Gets a milestone by name
+   * @param name name of the milestone to get
+   * @return a Milestone object populated with milestone attributes
+   * @throws TracRpcException 
+   */
+  public Milestone getMilestone(String name) throws TracRpcException
+  {
+    Object[] params = new Object[]{name};
+    HashMap result = (HashMap)this.call("ticket.milestone.get", params);
+    Milestone m = new Milestone();
+    m.setAttribs(result);
+    return m;
+  }
+  
+  /**
+   * Updates attributes on an existing milestone
+   * @param m milestone with updated values
+   * @throws TracRpcException 
+   */
+  public void updateMilestone(Milestone m) throws TracRpcException
+  {
+    Object[] params = new Object[]{m.getName(), m.getAttribs()};
+    Integer result = (Integer)this.call("ticket.milestone.update", params);
+    if(result > 0) {
+      throw new TracRpcException("ticket.milestone.update returned error " 
                                   + result.toString());
     }
   }
