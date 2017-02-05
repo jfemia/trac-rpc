@@ -23,48 +23,31 @@
  */
 package uk.co.badgerr.trac;
 
-import java.util.HashMap;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
- * Contains attributes in a HashMap and provides accessors to it
- * and utility for reading strings (creating empty ones when needed)
+ * Tests the BasicStruct class
  * @author James Femia <badgerr@gmail.com>
  */
-public class AttribContainer {
-  protected HashMap<String,Object> attribs;
-
-  public AttribContainer()
+public class BasicStructTest extends TestCase
+{
+  public BasicStructTest( String testName )
   {
-    attribs = new HashMap();
-  }
-  
-  /**
-   * Direct accessor to our attributes
-   * @return 
-   */
-  public HashMap<String, Object> getAttribs() {
-    return attribs;
+    super( testName );
   }
 
-  /**
-   * Overwrites all attributes with the specified hashmap
-   * @param attribs 
-   */
-  public void setAttribs(HashMap<String, Object> attribs) {
-    if(attribs != null)
-      this.attribs = attribs;
+  public static Test suite()
+  {
+    return new TestSuite( BasicStructTest.class );
   }
   
-  /**
-   * Get a named attribute string, or an empty string if attrib doesn't exist
-   * @param name name of the attribute to get
-   * @return a valid string, with attrib contents, or empty
-   */
-  public String getAttribString(String name)
+  public void testNameGetAndSet()
   {
-    String ret = (String)this.attribs.get(name);
-    if(ret == null)
-      ret = new String();
-    return ret;
+    BasicStruct b = new BasicStruct();
+    assertEquals(b.getName(), "");
+    b.setName("foo");
+    assertEquals(b.getName(), "foo");
   }
 }

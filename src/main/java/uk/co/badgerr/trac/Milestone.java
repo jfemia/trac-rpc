@@ -85,7 +85,10 @@ public final class Milestone extends BasicStruct {
    * @return completion status
    */
   public Boolean getCompleted() {
-    return (Boolean)this.attribs.get("due") == true; //handles null
+    Boolean b = (Boolean)this.attribs.get("completed");
+    if(b == null || !b)
+      return false;
+    return true;
   }
 
   /**

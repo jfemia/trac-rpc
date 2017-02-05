@@ -24,47 +24,49 @@
 package uk.co.badgerr.trac;
 
 import java.util.HashMap;
+import static junit.framework.Assert.assertNotNull;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
- * Contains attributes in a HashMap and provides accessors to it
- * and utility for reading strings (creating empty ones when needed)
+ * Tests the AttribContainer class
  * @author James Femia <badgerr@gmail.com>
  */
-public class AttribContainer {
-  protected HashMap<String,Object> attribs;
-
-  public AttribContainer()
+public class AttribContainerTest extends TestCase
+{
+  public AttribContainerTest( String testName )
   {
-    attribs = new HashMap();
-  }
-  
-  /**
-   * Direct accessor to our attributes
-   * @return 
-   */
-  public HashMap<String, Object> getAttribs() {
-    return attribs;
+    super( testName );
   }
 
-  /**
-   * Overwrites all attributes with the specified hashmap
-   * @param attribs 
-   */
-  public void setAttribs(HashMap<String, Object> attribs) {
-    if(attribs != null)
-      this.attribs = attribs;
+  public static Test suite()
+  {
+    return new TestSuite( AttribContainerTest.class );
   }
   
-  /**
-   * Get a named attribute string, or an empty string if attrib doesn't exist
-   * @param name name of the attribute to get
-   * @return a valid string, with attrib contents, or empty
-   */
-  public String getAttribString(String name)
+  public void testCanConstructAttribContainer()
   {
-    String ret = (String)this.attribs.get(name);
-    if(ret == null)
-      ret = new String();
-    return ret;
+    AttribContainer a = new AttribContainer();
+    assertNotNull(a);
+  }
+  
+  public void testGetAttribsNeverNull()
+  {
+    AttribContainer a = new AttribContainer();
+    assertNotNull(a.getAttribs());
+    a.setAttribs(null);
+    assertNotNull(a.getAttribs());
+  }
+  
+  public void testGetAttribStringNeverNull()
+  {
+    AttribContainer a = new AttribContainer();
+    HashMap<String, Object> map = new HashMap();
+    map.put("Test", "foo");
+    a.setAttribs(map);
+    assertEquals(a.getAttribString("nonexistant"), "");
+    assertEquals(a.getAttribString("Test"), "foo");
+    assertTrue(map.equals(a.getAttribs()));
   }
 }
