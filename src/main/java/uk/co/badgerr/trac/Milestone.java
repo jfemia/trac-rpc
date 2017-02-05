@@ -29,7 +29,7 @@ import java.util.Date;
  * Represents a Trac Milestone
  * @author James Femia <badgerr@gmail.com>
  */
-public final class Milestone extends AttribContainer {
+public final class Milestone extends BasicStruct {
   /**
    * Create an empty milestone
    */
@@ -62,22 +62,6 @@ public final class Milestone extends AttribContainer {
    */
   public void setDue(Date due) {
     this.attribs.put("due", due);
-  }
-
-  /**
-   * Gets the name of this milestone
-   * @return name
-   */
-  public String getName() {
-    return this.getAttribString("name");
-  }
-
-  /**
-   * Sets the name of this milestone
-   * @param name new name
-   */
-  public void setName(String name) {
-    this.attribs.put("name", name);
   }
 
   /**

@@ -119,12 +119,7 @@ public class TracRpc {
    */
   public void createMilestone(Milestone m) throws TracRpcException
   {
-    Object[] params = new Object[]{m.getName(), m.getAttribs()};
-    Integer result = (Integer)this.call("ticket.milestone.create", params);
-    if(result > 0) {
-      throw new TracRpcException("ticket.milestone.create returned error " 
-                                  + result.toString());
-    }
+    this.sendBasicStruct(m, "ticket.milestone.create");
   }
   
   /**
@@ -135,11 +130,7 @@ public class TracRpc {
    */
   public Milestone getMilestone(String name) throws TracRpcException
   {
-    Object[] params = new Object[]{name};
-    HashMap result = (HashMap)this.call("ticket.milestone.get", params);
-    Milestone m = new Milestone();
-    m.setAttribs(result);
-    return m;
+    return this.getBasicStruct(name, "ticket.milestone.get", Milestone.class);
   }
   
   /**
@@ -149,11 +140,80 @@ public class TracRpc {
    */
   public void updateMilestone(Milestone m) throws TracRpcException
   {
-    Object[] params = new Object[]{m.getName(), m.getAttribs()};
-    Integer result = (Integer)this.call("ticket.milestone.update", params);
+    this.sendBasicStruct(m, "ticket.milestone.update");
+  }
+  
+  /**
+   * Creates a new ticket version entry
+   * @param tv TicketVersion populated with attributes
+   * @throws TracRpcException 
+   */
+  public void createTicketVersion(TicketVersion tv) throws TracRpcException
+  {
+    this.sendBasicStruct(tv, "ticket.version.create");
+  }
+  
+  /**
+   * Gets a ticket version by name
+   * @param name name of the ticket version to get
+   * @return a TicketVersion object populated with attributes
+   * @throws TracRpcException 
+   */
+  public TicketVersion getTicketVersion(String name) throws TracRpcException
+  {
+    return this.getBasicStruct(name, "ticket.version.get", TicketVersion.class);
+  }
+  
+  /**
+   * Updates values of a ticket version
+   * @param tv TicketVersion with updated attributes
+   * @throws TracRpcException 
+   */
+  public void updateTicketVersion(TicketVersion tv) throws TracRpcException
+  {
+    this.sendBasicStruct(tv, "ticket.version.update");
+  }
+  
+  /**
+   * Generic function for getting basic structs from Trac by their name.
+   * For example, ticket versions, components, etc
+   * @param <T> Type of object to get, must extend AttribContainer
+   * @param name Name of the object to get
+   * @param func The RPC function to call to get the object (expecting 1 string param)
+   * @param clazz The class to instantiate a T
+   * @return A new T populated with attributes
+   * @throws TracRpcException when there is an RPC error or T can't be created
+   */
+  protected <T extends BasicStruct> T getBasicStruct(
+      String name, String func, Class<T> clazz) throws TracRpcException
+  {
+    Object[] params = new Object[]{name};
+    HashMap result = (HashMap)this.call(func, params);
+    try {
+      T ret = clazz.newInstance();
+      ret.setAttribs(result);
+      return ret;
+    } catch(IllegalAccessException e) {
+      throw new TracRpcException(e.getMessage());
+    } catch (InstantiationException e) {
+      throw new TracRpcException(e.getMessage());
+    }
+  }
+  
+  /**
+   * Sends a basic struct to the RPC 
+   * @param <T> Type of object
+   * @param obj The object to send
+   * @param func The RPC function to call (expects name and struct params)
+   * @throws TracRpcException 
+   */
+  protected <T extends BasicStruct> void sendBasicStruct(T obj, String func) 
+          throws TracRpcException
+  {
+    Object[] params = new Object[]{obj.getName(), obj.getAttribs()};
+    Integer result = (Integer)this.call(func, params);
     if(result > 0) {
-      throw new TracRpcException("ticket.milestone.update returned error " 
-                                  + result.toString());
+      throw new TracRpcException(func + " returned error " + result.toString());
     }
   }
   
